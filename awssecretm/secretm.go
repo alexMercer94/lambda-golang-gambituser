@@ -1,4 +1,4 @@
-package awsecrectm
+package awsecretm
 
 import (
 	"backend/lambda-golang-gambituser/awsgo"

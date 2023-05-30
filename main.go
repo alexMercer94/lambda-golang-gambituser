@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"backend/lambda-golang-gambituser/awsgo"
+	"backend/lambda-golang-gambituser/db"
+	"backend/lambda-golang-gambituser/models"
 
 	"github.com/aws/aws-lambda-go/events"
 	lambda "github.com/aws/aws-lambda-go/lambda"
@@ -25,6 +27,27 @@ func ExecuteLambda(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 	if !ValidateParams() {
 		fmt.Println("Error en parametros, enviar 'SecretName'")
 		err := errors.New("Error en parametros, enviar 'SecretName'")
+		return event, err
+	}
+
+	var data models.SignUp
+
+	for row, att := range event.Request.UserAttributes {
+		switch row {
+		case "email":
+			data.UserEmail = att
+			fmt.Println("Email = " + data.UserEmail)
+
+		case "sub":
+			data.UserUUID = att
+			fmt.Println("Sub = " + data.UserUUID)
+		}
+
+	}
+
+	err := db.ReadSecret()
+	if err != nil {
+		fmt.Println(" > Error al leer el Secret de AWS Secret Manager: " + err.Error())
 		return event, err
 	}
 }
