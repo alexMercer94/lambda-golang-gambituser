@@ -31,7 +31,9 @@ func ExecuteLambda(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 	}
 
 	var data models.SignUp
-
+	/*
+		Obtener data del evento de Cognito y setearla en el modelo
+	*/
 	for row, att := range event.Request.UserAttributes {
 		switch row {
 		case "email":
@@ -45,11 +47,16 @@ func ExecuteLambda(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 
 	}
 
+	// Leer el Secret de Secret Manager
 	err := db.ReadSecret()
 	if err != nil {
 		fmt.Println(" > Error al leer el Secret de AWS Secret Manager: " + err.Error())
 		return event, err
 	}
+
+	// Insertar datos en la Tabla User de la BD
+	err = db.SignUp(data)
+	return event, err
 }
 
 /*
