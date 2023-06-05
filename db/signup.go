@@ -11,7 +11,7 @@ import (
 /*
 Insertar datos en la tabla Users de la BD
 */
-func SignUp(sig models.SignUp) error {
+func SignUp(sign models.SignUp) error {
 	fmt.Println("Comienza registro")
 
 	err := DbConnect()
@@ -21,7 +21,7 @@ func SignUp(sig models.SignUp) error {
 
 	defer Db.Close()
 
-	sqlQuery := "INSERT INTO users (User_Email, User_UUID, User_DateAdd) VALUES('" + sig.UserEmail + "', '" + sig.UserUUID + "', '" + tools.DateMySQL() + "')"
+	sqlQuery := fmt.Sprintf(`INSERT INTO users (User_Email, User_UUID, User_DateAdd) VALUES ('%v' , '%v', '%v')`, sign.UserEmail, sign.UserUUID, tools.DateMySQL())
 	fmt.Println(sqlQuery)
 	_, err = Db.Exec(sqlQuery)
 
